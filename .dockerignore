@@ -1,0 +1,12 @@
+.venv
+__pycache__
+*.pyc
+.git
+.gitignore
+*.ipynb
+*.pdf
+Archive-*.zip
+market_basket_dataset.csv
+.DS_Store
+.gemini
+brain
