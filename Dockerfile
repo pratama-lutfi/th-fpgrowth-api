@@ -25,4 +25,5 @@ EXPOSE 8000
 
 # Run the application
 # Using Gunicorn with Uvicorn workers for production stability
-CMD ["gunicorn", "main:app", "-w", "4", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:8000"]
+# Render provides a $PORT environment variable
+CMD gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT

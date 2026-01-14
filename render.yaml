@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: th-fpgrowth-api
+    runtime: docker
+    plan: free
+    region: singapore # Change this to your preferred region (e.g., oregon, frankfurt)
+    envVars:
+      - key: PORT
+        value: 8000 # Render will automatically override this, but it's good for documentation
+      - key: PYTHON_VERSION
+        value: 3.10.0
