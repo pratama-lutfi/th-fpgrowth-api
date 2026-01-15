@@ -13,17 +13,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+# Create a non-root user with UID 1000 (Required by Hugging Face)
+RUN useradd -m -u 1000 user
+USER user
+ENV PATH="/home/user/.local/bin:${PATH}"
+
 # Install Python dependencies
-COPY requirements.txt .
+COPY --chown=user:user requirements.txt .
 RUN pip install --upgrade pip && pip install --no-cache-dir -r requirements.txt
 
-# Copy project
-COPY . .
+# Copy project files
+COPY --chown=user:user . .
 
-# Expose port
-EXPOSE 8000
+# Hugging Face expects port 7860
+EXPOSE 7860
 
-# Run the application
-# Using Gunicorn with Uvicorn workers for production stability
-# Render provides a $PORT environment variable
-CMD gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker --bind 0.0.0.0:$PORT
+# Run the application on port 7860 specifically
+# Using 1 worker to maximize memory availability for heavy processing
+# Increased timeout to 600 seconds (10 mins) for long-running analysis
+CMD ["gunicorn", "main:app", "-w", "1", "-k", "uvicorn.workers.UvicornWorker", "--bind", "0.0.0.0:7860", "--timeout", "600"]
