@@ -100,7 +100,7 @@ class MarketBasketService:
             for _, rule in high_lift_rules.iterrows():
                 antecedents = ', '.join(list(rule['antecedents']))
                 consequents = ', '.join(list(rule['consequents']))
-                cross_selling_text.append(f"   - Jika customer membeli {antecedents}, rekomendasikan {consequents}")
+                cross_selling_text.append(f"   - Jika customer membeli {antecedents}, maka {consequents}")
                 cross_selling_text.append(f"     (Confidence: {rule['confidence']:.1%}, Lift: {rule['lift']:.2f})")
 
         # Create the formatted summary string
