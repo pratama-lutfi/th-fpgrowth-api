@@ -54,8 +54,8 @@ class MarketBasketService:
         ]
         
         # Calculate stats
-        total_transactions = len(transactions)
-        total_unique_items = df['Itemname'].nunique()
+        total_transactions = len(transactions_tabu)
+        total_unique_items = len(tabu_results['selected_items'])
         total_frequent_itemsets = len(frequent_itemsets)
         total_rules = len(rules)
         
@@ -65,17 +65,18 @@ class MarketBasketService:
         rules_lift_gt_2 = len(rules[rules['lift'] > 2]) if not rules.empty else 0
         rules_conf_gt_08 = len(rules[rules['confidence'] > 0.8]) if not rules.empty else 0
 
-        # Format cross selling strategies (Top 10)
+        # Format cross selling strategies (Top 5 with lift > 5)
         cross_selling_strategies = []
         if not rules.empty:
-            top_rules = rules.sort_values(by='lift', ascending=False).head(10)
-            for _, row in top_rules.iterrows():
+            high_lift_rules = rules[rules['lift'] > 5].head(5)
+            for _, rule in high_lift_rules.iterrows():
+                antecedents = ', '.join(list(rule['antecedents']))
+                consequents = ', '.join(list(rule['consequents']))
                 cross_selling_strategies.append({
-                    "antecedents": list(row["antecedents"]),
-                    "consequents": list(row["consequents"]),
-                    "support": row["support"],
-                    "confidence": row["confidence"],
-                    "lift": row["lift"]
+                    "antecedents": antecedents,
+                    "consequents": consequents,
+                    "confidence": f"{rule['confidence']:.1%}",
+                    "lift": f"{rule['lift']:.2f}"
                 })
 
         # Format Business Recommendations (Top 10 frequent itemsets with > 1 item)
@@ -120,7 +121,7 @@ Jumlah rules dengan confidence > 0.8: {rules_conf_gt_08}
 1. Item yang sering dibeli bersama:
 {chr(10).join(recommendations) if recommendations else "   (Tidak ada itemset yang memenuhi kriteria)"}
 
-2. Strategi Cross-selling berdasarkan rules dengan lift tinggi:
+2. Top Association Rules (berdasarkan lift):
 {chr(10).join(cross_selling_text) if cross_selling_text else "   (Tidak ada rules dengan lift > 5)"}
 """
         

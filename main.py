@@ -10,6 +10,7 @@ app = FastAPI(title="Market Basket Analysis API")
 # Configure CORS
 origins = [
     "http://localhost:5173",
+    "http://localhost:5174",
     "http://127.0.0.1:5173",
     "https://associate-rule-mining-web.vercel.app",
 ]
@@ -27,7 +28,7 @@ async def analyze(
     file: UploadFile = File(...),
     max_iter: int = Form(100),
     tabu_size: int = Form(18),
-    k_focus_items: int = Form(50),
+    k_focus_items: int = Form(10),
     tabu_threshold: float = Form(0.1),
     min_support: float = Form(0.001),
     min_confidence: float = Form(0.2)
